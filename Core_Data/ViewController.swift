@@ -11,6 +11,10 @@ import CoreData
 
 class ViewController: UIViewController {
     
+    var usernameArray:[String] = []
+    var passwordArray:[String] = []
+    var emailArray:[String] = []
+    
     
     
     @IBOutlet weak var userNameTextFiled: UITextField!
@@ -46,8 +50,7 @@ class ViewController: UIViewController {
         let userNameText = userNameTextFiled.text
         let passwordText = passwordTextFiled.text
         let emailText = emailTextFiled.text
-        
-        
+
         let user = NSManagedObject(entity: userEntity, insertInto: managedContext)
         user.setValue(userNameText, forKey: "username")
         user.setValue(passwordText, forKey: "password")
@@ -59,28 +62,69 @@ class ViewController: UIViewController {
             passwordTextFiled.text = ""
             emailTextFiled.text = ""
             
-            //Just For Sure Your Data Has been Saved !
-            print(userNameText!)
-            print(passwordText!)
-            print(emailText!)
-            
+//            Just For Sure Your Data Has been Saved !
+//            print(userNameText!)
+//            print(passwordText!)
+//            print(emailText!)
             
         } catch {
             
             print("error  Could not Save !")
             
         }
-        
-        
-        
-        
+  
     }
     
     
-    
-    
-    
+    @IBAction func showDataBtn(_ sender: Any) {
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context =  appDelegate.persistentContainer.viewContext
+        
+        let request  = NSFetchRequest<NSFetchRequestResult>(entityName: "Users")
+        request.returnsObjectsAsFaults = false
+        
+        do
+        {
+            let results = try context.fetch(request)
+            
+            if results.count > 0
+            {
+                for myresult in results as! [NSManagedObject]
+                {
+                    if let username = myresult.value(forKey: "username") as? String
+                    {
+                    usernameArray.append(username)
+                    }
+                    
+                    if let password = myresult.value(forKey: "password") as? String
+                    {
+                        passwordArray.append(password)
+                    }
+                    
+                    if let email = myresult.value(forKey: "email")as? String
+                    {
+                        emailArray.append(email)
+                    }
 
-
+                }
+                
+                print(usernameArray)
+                print(passwordArray)
+                print(emailArray)
+                
+                
+            }
+         
+            
+        }
+        catch
+        {
+            // PROCESS ERROR
+        }
+        
+  
+    }
+    
 }
 
